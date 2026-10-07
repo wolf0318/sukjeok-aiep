@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-mVxu6UsA91FRNPYKbSkhcIGEL7HMQ9dVdLyCYZpEf4U='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-aghuNoV24uJTXZq+9bN+0/+7wY6JYfzFo5tFKNISLUk='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>석적초 AIEP 교내 연수</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -413,7 +413,7 @@ footer .admin{margin-left:auto;background:none;border:0;color:var(--ink-3);text-
   <p class="fine">연수 안내서와 관련된 질문에만 답해 드려요. 학생 이름 같은 개인정보는 적지 말아 주시고, 답과 함께 나오는 안내서 장으로 꼭 확인해 주세요.</p>
 </section>
 
-<script src="content.js?v=202610072039"></script>
+<script src="content.js?v=202610072053"></script>
 <script>
 (function(){
 'use strict';
@@ -767,11 +767,11 @@ $('#sheetBg').onclick = () => { closeToc(); closeChat(); };
 
 /* ---------- 연수 도우미 (제미나이) ---------- */
 const MODELS = [
-  ['gemini-flash-latest', '제미나이 Flash 최신 (기본)'],
-  ['gemini-3.5-flash-lite', '제미나이 3.5 Flash-Lite (빠르고 가벼움)'],
-  ['gemini-3.8-flash', '제미나이 3.8 Flash']
+  ['gemini-3.5-flash-lite', '제미나이 3.5 Flash-Lite (기본, 빠름)'],
+  ['gemini-flash-latest', '제미나이 Flash 최신 (붐비면 느리거나 멈출 수 있음)']
 ];
-const FALLBACK = ['gemini-flash-latest', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'];
+// 앞 모델이 붐비거나(503·429) 12초 안에 답을 시작하지 않으면 다음 모델로 넘어갑니다.
+const FALLBACK = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
 const REFUSAL = '죄송하지만 그 부분은 답해 드릴 수 없어요. 이 연수 도우미는 석적초 AIEP 연수 안내서와 관련된 질문에만 답해 드려요.';
 const MAX_Q = 600, RL_COUNT = 15, RL_WINDOW = 10 * 60 * 1000;
 
@@ -780,7 +780,7 @@ const mix = k => 'g1' + btoa(unescape(encodeURIComponent(k.split('').reverse().j
 function unmix(s){ try { if (!s || !s.startsWith('g1')) return ''; s = s.slice(2).replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return decodeURIComponent(escape(atob(s))).split('').reverse().join(''); } catch(e){ return ''; } }
 const getKey = () => unmix(store.get('sj.gk', ''));
 const setKey = k => store.set('sj.gk', mix(k));
-const getModel = () => store.get('sj.gm', MODELS[0][0]);
+const getModel = () => { const m = store.get('sj.gm', MODELS[0][0]); return MODELS.some(x => x[0] === m) ? m : MODELS[0][0]; };
 const maskKey = k => k ? k.slice(0, 4) + '…' + k.slice(-4) : '';
 
 // 선생님용 링크: API 키를 '연수 코드'로 잠가서(PBKDF2 + AES-GCM) 링크에 담습니다. 링크만으로는 키를 꺼낼 수 없습니다.
@@ -857,6 +857,7 @@ const SYS = [
   '[답하는 방법]',
   '1. [안내서 발췌]를 근거로 답합니다. 이 안내서는 연수를 준비하며 실제 화면을 눌러 보고 확인한 내용입니다.',
   '2. 근거로 쓴 장은 해당 문장 끝에 [[도구키:장번호]] 형식으로 붙입니다. 예: [[quizn:4]]. 발췌에 실제로 나온 도구키와 장번호만 쓰고, 한 답에 1~4개 정도로 합니다.',
+  '2-1. 요금(무료·유료, 이용 기간)은 [안내서 목록]의 "요금" 내용만 근거로 말하고, 그 부분에는 [[ ]] 표시를 붙이지 않습니다. 목록에 없는 금액이나 기간은 말하지 않습니다.',
   '3. 범위 안의 질문인데 발췌에 답이 없으면 "안내서에서는 다루지 않은 내용이에요."라고 먼저 밝힙니다. 그 도구나 기능과 바로 관련된 일반적인 도움말만 두세 문장으로 덧붙일 수 있고, 이때는 "화면이 바뀌었을 수 있으니 직접 확인해 주세요."를 함께 말합니다. 확실하지 않은 메뉴 이름, 숫자, 날짜, 요금은 쓰지 않습니다. 가장 가까운 안내서 장이 있으면 알려 드리고, 그래도 막히면 연수 담당 선생님께 메신저로 물어보시라고 안내합니다.',
   '4. 범위 밖 질문(날씨, 뉴스, 연예, 일반 상식, 다른 과목 내용 설명, 글쓰기·번역·숙제·코딩 대행, 개인 상담, 안내서에 없는 다른 서비스 사용법 등)에는 설명을 붙이지 말고 다음 문장 하나로만 답합니다: ' + REFUSAL,
   '4-1. 안내서에서 다룬 도구로 할 활동의 내용(퀴즈 문제, 학습지, 수업 자료 글 등)을 대신 만들어 달라는 요청에는 내용을 만들지 않습니다. 대신 그 도구 안의 만들기 기능(예: AI로 문제 만들기)을 쓰는 방법을 근거와 함께 짧게 안내합니다.',
@@ -917,7 +918,8 @@ function md(src){
 function inline(s){
   return s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
     .replace(/\[\[\s*([a-z]+)\s*:\s*(\d+)\s*\]\]/g, (m, k, n) => (deckBy[k] && deckBy[k].slides[n - 1]) ? `<a class="cite" href="#/d/${k}/${+n}">${esc(deckBy[k].name)} ${+n}장</a>` : '')
-    .replace(/\[\[[^\]]*\]?\]?$/, '');
+    .replace(/\s*\[\[[^\]]*\]\]/g, '')
+    .replace(/\s*\[\[[^\]]*\]?$/, '');
 }
 function renderMsgs(){
   let h = '';
@@ -958,8 +960,9 @@ ta.addEventListener('input', autoGrow);
 ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); $('#askForm').requestSubmit(); } });
 $('#askForm').addEventListener('submit', e => { e.preventDefault(); if (busy) { busy.abort(); return; } const q = ta.value.trim(); if (q) ask(q); });
 
-function errText(st, msg){
+function errText(st, msg, code){
   msg = msg || '';
+  if (code === 'slow') return '제미나이가 지금 붐벼서 답을 시작하지 못했어요. 잠시 뒤에 다시 물어봐 주세요.';
   if (st === 400 && /api key/i.test(msg)) return 'API 키가 올바르지 않아요. 관리자 설정에서 키를 다시 확인해 주세요.';
   if (st === 400) return '질문을 처리하지 못했어요. 조금 짧게 바꿔서 다시 물어봐 주세요.';
   if (st === 401 || st === 403) return '이 키로는 이 사이트에서 제미나이를 쓸 수 없어요. 관리자 설정에서 키와 키의 웹사이트 제한을 확인해 주세요.';
@@ -975,14 +978,17 @@ function rateLeft(){
   return Math.ceil((RL_WINDOW - (now - log[0])) / 60000);
 }
 function noteAsked(){ const log = store.get('sj.rl', []) || []; log.push(Date.now()); store.set('sj.rl', log.slice(-RL_COUNT * 2)); }
-// 답하기 전 '생각하기'를 줄여 첫 글자가 빨리 나오게 합니다(3.7·3.8 Flash는 minimal을 받지 않아 low).
+// 답하기 전 '생각하기'를 줄여 첫 글자가 빨리 나오게 합니다.
 const thinkFor = m => /lite|3\.5|3\.6/.test(m) ? 'minimal' : 'low';
-const noThink = new Set();
+const noThink = new Set(), slowAt = new Map();
+const slow = { add: m => slowAt.set(m, Date.now()), has: m => Date.now() - (slowAt.get(m) || 0) < 120000 };
+const FIRST_MS = 12000, STALL_MS = 20000;
 async function callGemini(contents, onText, signal, oneShot, keyOverride){
   const key = keyOverride || getKey();
   if (!key) throw { code:'nokey' };
   const prefer = getModel();
-  const list = [prefer].concat(FALLBACK.filter(m => m !== prefer));
+  let list = [prefer].concat(FALLBACK.filter(m => m !== prefer));
+  list = list.filter(m => !slow.has(m)).concat(list.filter(m => slow.has(m)));
   let lastErr = null;
   for (let mi = 0; mi < list.length; mi++) {
     const model = list[mi];
@@ -990,21 +996,39 @@ async function callGemini(contents, onText, signal, oneShot, keyOverride){
     if (!noThink.has(model)) body.generationConfig.thinkingConfig = { thinkingLevel: thinkFor(model) };
     if (!oneShot) body.systemInstruction = { parts:[{ text:SYS }] };
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:${oneShot ? 'generateContent' : 'streamGenerateContent?alt=sse'}`;
+    // 한 모델에 거는 시간 제한: 답이 시작되지 않거나 중간에 멈추면 이 시도만 끊습니다.
+    const ac = new AbortController(); let timedOut = false, timer = 0;
+    const arm = ms => { clearTimeout(timer); timer = setTimeout(() => { timedOut = true; ac.abort(); }, ms); };
+    const onOuter = () => ac.abort();
+    if (signal) { if (signal.aborted) throw { code:'abort' }; signal.addEventListener('abort', onOuter, { once:true }); }
+    const cleanup = () => { clearTimeout(timer); if (signal) signal.removeEventListener('abort', onOuter); };
+    arm(FIRST_MS);
     let res;
-    try { res = await fetch(url, { method:'POST', headers:{ 'Content-Type':'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body), signal, referrerPolicy:'strict-origin-when-cross-origin', credentials:'omit' }); }
-    catch (e) { if (e.name === 'AbortError') throw { code:'abort' }; throw { code:'net' }; }
+    try { res = await fetch(url, { method:'POST', headers:{ 'Content-Type':'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body), signal: ac.signal, referrerPolicy:'strict-origin-when-cross-origin', credentials:'omit' }); }
+    catch (e) {
+      cleanup();
+      if (timedOut) { slow.add(model); lastErr = { code:'slow', model }; continue; }
+      if (e.name === 'AbortError') throw { code:'abort' };
+      lastErr = { code:'net' }; continue;
+    }
     if (!res.ok) {
+      cleanup();
       let m = ''; try { const j = await res.json(); m = (j.error && j.error.message) || ''; } catch(e){}
       lastErr = { code:'http', status:res.status, msg:m, model };
       if (res.status === 400 && /thinking/i.test(m) && !noThink.has(model)) { noThink.add(model); mi--; continue; }
-      if (res.status === 404) continue;
+      if (res.status === 404 || res.status === 429 || res.status >= 500) { if (res.status !== 404) slow.add(model); continue; }
       throw lastErr;
     }
-    if (oneShot) { const j = await res.json(); const parts = (((j.candidates || [])[0] || {}).content || {}).parts || []; return { text: parts.filter(p => !p.thought).map(p => p.text || '').join(''), model }; }
+    if (oneShot) {
+      try { const j = await res.json(); cleanup(); const parts = (((j.candidates || [])[0] || {}).content || {}).parts || []; return { text: parts.filter(p => !p.thought).map(p => p.text || '').join(''), model }; }
+      catch (e) { cleanup(); if (timedOut) { slow.add(model); lastErr = { code:'slow', model }; continue; } if (e.name === 'AbortError') throw { code:'abort' }; throw { code:'net' }; }
+    }
+    arm(STALL_MS);
     const reader = res.body.getReader(), dc = new TextDecoder(); let buf = '', text = '';
     try {
       for (;;) {
         const { done, value } = await reader.read(); if (done) break;
+        arm(STALL_MS);
         buf += dc.decode(value, { stream:true });
         let i;
         while ((i = buf.indexOf('\n')) >= 0) {
@@ -1014,7 +1038,12 @@ async function callGemini(contents, onText, signal, oneShot, keyOverride){
           try { const j = JSON.parse(js); const parts = (((j.candidates || [])[0] || {}).content || {}).parts || []; for (const p of parts) if (p.text && !p.thought) { text += p.text; onText(text); } } catch(e){}
         }
       }
-    } catch (e) { if (e.name === 'AbortError') throw { code:'abort', text }; throw { code:'net', text }; }
+    } catch (e) {
+      cleanup();
+      if (timedOut) { if (text) return { text, model }; slow.add(model); lastErr = { code:'slow', model }; continue; }
+      if (e.name === 'AbortError') throw { code:'abort', text }; throw { code:'net', text };
+    }
+    cleanup();
     return { text, model };
   }
   throw lastErr || { code:'net' };
@@ -1047,7 +1076,7 @@ async function ask(q){
   } catch (e) {
     if (e.code === 'abort') { if (e.text) chat.push({ role:'model', text: e.text + '\n\n(여기서 멈췄어요)' }); }
     else if (e.code === 'nokey') chat.push({ role:'err', text:'이 기기에는 아직 연수 도우미가 연결되지 않았어요.' });
-    else { if (e.text) chat.push({ role:'model', text:e.text }); chat.push({ role:'err', text: errText(e.status, e.msg) }); }
+    else { if (e.text) chat.push({ role:'model', text:e.text }); chat.push({ role:'err', text: errText(e.status, e.msg, e.code) }); }
   } finally {
     busy = null; $('#askSend').textContent = '보내기';
     if (chat.length > 40) chat = chat.slice(-40);
@@ -1064,7 +1093,7 @@ function openAdmin(){
     <h2 id="admH">관리자 설정</h2>
     <p class="intro">연수 도우미가 쓸 제미나이 API 키를 넣는 곳이에요. 키는 사이트 코드에 들어가지 않고, 이 기기와 '선생님용 링크 + 연수 코드'로 연결한 기기에만 저장됩니다. 저장된 키는 이 화면에도 다시 보이지 않아요.</p>
     <div class="field"><label for="admKey">제미나이 API 키</label><div class="row"><input id="admKey" type="password" autocomplete="off" spellcheck="false" placeholder="${k ? '저장된 키: ' + esc(maskKey(k)) + ' (바꿀 때만 새로 넣기)' : 'AIza로 시작하는 키'}"><button class="btn" id="admShow" type="button">보기</button></div><small>Google AI Studio(aistudio.google.com)의 'Get API key'에서 만든 키를 붙여 넣어 주세요.</small></div>
-    <div class="field"><label for="admModel">모델</label><select id="admModel">${MODELS.map(([v, l]) => `<option value="${v}" ${v === model ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select><small>기본값은 늘 최신 Flash 모델을 가리켜요. 모델 이름이 바뀌어도 다른 모델로 이어서 시도합니다.</small></div>
+    <div class="field"><label for="admModel">모델</label><select id="admModel">${MODELS.map(([v, l]) => `<option value="${v}" ${v === model ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select><small>기본값 3.5 Flash-Lite가 가장 빨라요. 고른 모델이 붐비거나 12초 안에 답을 시작하지 않으면 다른 모델로 넘어가요.</small></div>
     <p class="status" id="admStatus" hidden></p>
     <div class="actions" style="margin-bottom:22px"><button class="btn" id="admDel" type="button">이 기기에서 키 지우기</button><button class="btn" id="admTest" type="button">연결 시험</button><button class="btn primary" id="admSave" type="button">저장</button></div>
     <div class="field"><label for="admCode">연수 코드 정하기</label><input id="admCode" type="text" autocomplete="off" spellcheck="false" placeholder="6자 이상 (예: 석적에듀2026)"><small>선생님용 링크 안의 키는 이 코드로 잠겨요. 링크는 메신저로, 코드는 연수 때 말로 알려 드리면 링크만 새어 나가도 키는 지켜집니다.</small></div>
@@ -1101,7 +1130,7 @@ function openAdmin(){
     store.set('sj.gm', $('#admModel').value);
     show('wait', '제미나이에 연결해 보는 중이에요…');
     try { const r = await callGemini([{ role:'user', parts:[{ text:'연결 확인입니다. "연결됨"이라고만 답해 주세요.' }] }], () => {}, undefined, true, v); show('ok', `연결됐어요. (${r.model} 응답: ${r.text.trim().slice(0, 30)})${keyIn() ? ' 저장 버튼도 눌러 주세요.' : ''}`); }
-    catch (e) { show('bad', e.code === 'http' ? errText(e.status, e.msg) + (e.msg ? ` (${e.msg.slice(0, 120)})` : '') : '연결하지 못했어요. 인터넷 연결을 확인해 주세요.'); }
+    catch (e) { show('bad', e.code === 'http' ? errText(e.status, e.msg) + (e.msg ? ` (${e.msg.slice(0, 120)})` : '') : e.code === 'slow' ? errText(0, '', 'slow') : '연결하지 못했어요. 인터넷 연결을 확인해 주세요.'); }
   };
   $('#admMake').onclick = async () => {
     const k2 = getKey(), code = $('#admCode').value;
