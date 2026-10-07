@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-vM8sGVGaBiR8lIJFc+SIbB7pFtDRZfUQd3ctnIfIMHg='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Sm7yiIoFMA1ezrJzE1TImpSkGUZO9XgBnZRtzwAF8HU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>석적초 AIEP 교내 연수</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -835,7 +835,7 @@ function openUnlock(){
     show('wait', '확인하는 중이에요…'); $('#unOk').disabled = true;
     try {
       const k = await openSealed(blob, code);
-      if (!/^[A-Za-z0-9_-]{20,}$/.test(k)) throw new Error('bad');
+      if (!/^[\x21-\x7E]{20,}$/.test(k)) throw new Error('bad');
       setKey(k); store.del('sj.pending'); m.remove(); toast('연수 도우미가 이 기기에 연결되었어요'); renderMsgs(); setChips();
     } catch (e) { show('bad', '연수 코드가 맞지 않아요. 띄어쓰기까지 그대로 넣었는지 확인해 주세요.'); $('#unOk').disabled = false; }
   };
@@ -1069,7 +1069,7 @@ function openAdmin(){
   document.body.appendChild(m);
   const st = $('#admStatus');
   const show = (cls, t) => { st.hidden = false; st.className = 'status ' + cls; st.textContent = t; };
-  const keyIn = () => $('#admKey').value.trim();
+  const keyIn = () => $('#admKey').value.replace(/[\s\u200B-\u200D\uFEFF]/g, '');
   $('#admShow').onclick = () => { const i = $('#admKey'); i.type = i.type === 'password' ? 'text' : 'password'; $('#admShow').textContent = i.type === 'password' ? '보기' : '숨기기'; };
   $('#admClose').onclick = () => m.remove();
   m.addEventListener('click', e => { if (e.target === m) m.remove(); });
@@ -1077,7 +1077,7 @@ function openAdmin(){
     const v = keyIn();
     store.set('sj.gm', $('#admModel').value);
     if (!v) { show(getKey() ? 'ok' : 'bad', getKey() ? '모델 설정을 저장했어요. 키는 그대로예요.' : '키를 넣어 주세요.'); return; }
-    if (!/^[A-Za-z0-9_-]{20,}$/.test(v)) { show('bad', '키 모양이 맞지 않아요. 앞뒤 빈칸 없이 키만 붙여 넣어 주세요.'); return; }
+    if (!/^[\x21-\x7E]{20,}$/.test(v)) { show('bad', '키 모양이 맞지 않아요. 키만 그대로 붙여 넣어 주세요.'); return; }
     setKey(v); $('#admKey').value = ''; $('#admKey').placeholder = '저장된 키: ' + maskKey(v) + ' (바꿀 때만 새로 넣기)';
     show('ok', '저장했어요. 이제 이 기기에서 연수 도우미를 쓸 수 있어요. 연결 시험도 눌러 보세요.');
     renderMsgs();
