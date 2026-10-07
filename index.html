@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Sm7yiIoFMA1ezrJzE1TImpSkGUZO9XgBnZRtzwAF8HU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-E5vOYuch3uckol6bXq/ZYHbvoRHm9BqYj9QXDeLh/Sk='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>석적초 AIEP 교내 연수</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -871,9 +871,9 @@ function buildContext(q, prevQ){
   const cur = view.name === 'deck' ? DOCS.find(x => x.d.key === view.key && x.s.n === view.n) : null;
   const hits = searchDocs(q + ' ' + (prevQ || ''), { limit:40, boostDeck: cur ? cur.d.key : null });
   const picked = [], seenK = new Set(); let size = 0;
-  const add = doc => { const k = doc.d.key + ':' + doc.s.n; if (seenK.has(k)) return; const t = docText(doc, 1200); if (size + t.length > 17000) return; seenK.add(k); picked.push(t); size += t.length; };
+  const add = doc => { const k = doc.d.key + ':' + doc.s.n; if (seenK.has(k)) return; const t = docText(doc, 900); if (size + t.length > 12000) return; seenK.add(k); picked.push(t); size += t.length; };
   if (cur) add(cur);
-  for (const h of hits) { if (picked.length >= 20) break; add(h.doc); }
+  for (const h of hits) { if (picked.length >= 16) break; add(h.doc); }
   return { ctx: picked.join('\n\n') || '(관련된 장을 찾지 못했어요)', cur: cur ? `${cur.d.name} ${cur.s.n}장 [[${cur.d.key}:${cur.s.n}]] · ${cur.s.t}` : '첫 화면(안내서 모음)' };
 }
 
@@ -882,7 +882,10 @@ if (!Array.isArray(chat)) chat = [];
 let busy = null;
 const chatEl = $('#chat'), msgsEl = $('#msgs');
 const chatOpen = () => !chatEl.hidden;
+let warmed = false;
+function warm(){ if (warmed || !getKey()) return; warmed = true; const l = document.createElement('link'); l.rel = 'preconnect'; l.href = 'https://generativelanguage.googleapis.com'; l.crossOrigin = 'anonymous'; document.head.appendChild(l); }
 function openChat(prefill){
+  warm();
   chatEl.hidden = false;
   if (window.innerWidth <= 640) $('#sheetBg').hidden = false;
   renderMsgs(); setChips();
@@ -969,14 +972,19 @@ function rateLeft(){
   return Math.ceil((RL_WINDOW - (now - log[0])) / 60000);
 }
 function noteAsked(){ const log = store.get('sj.rl', []) || []; log.push(Date.now()); store.set('sj.rl', log.slice(-RL_COUNT * 2)); }
+// 답하기 전 '생각하기'를 줄여 첫 글자가 빨리 나오게 합니다(3.7·3.8 Flash는 minimal을 받지 않아 low).
+const thinkFor = m => /lite|3\.5|3\.6/.test(m) ? 'minimal' : 'low';
+const noThink = new Set();
 async function callGemini(contents, onText, signal, oneShot, keyOverride){
   const key = keyOverride || getKey();
   if (!key) throw { code:'nokey' };
   const prefer = getModel();
   const list = [prefer].concat(FALLBACK.filter(m => m !== prefer));
   let lastErr = null;
-  for (const model of list) {
-    const body = { contents, generationConfig:{ temperature:0.2, maxOutputTokens: oneShot ? 64 : 1600 } };
+  for (let mi = 0; mi < list.length; mi++) {
+    const model = list[mi];
+    const body = { contents, generationConfig:{ temperature:0.2, maxOutputTokens: oneShot ? 256 : 1600 } };
+    if (!noThink.has(model)) body.generationConfig.thinkingConfig = { thinkingLevel: thinkFor(model) };
     if (!oneShot) body.systemInstruction = { parts:[{ text:SYS }] };
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:${oneShot ? 'generateContent' : 'streamGenerateContent?alt=sse'}`;
     let res;
@@ -985,6 +993,7 @@ async function callGemini(contents, onText, signal, oneShot, keyOverride){
     if (!res.ok) {
       let m = ''; try { const j = await res.json(); m = (j.error && j.error.message) || ''; } catch(e){}
       lastErr = { code:'http', status:res.status, msg:m, model };
+      if (res.status === 400 && /thinking/i.test(m) && !noThink.has(model)) { noThink.add(model); mi--; continue; }
       if (res.status === 404) continue;
       throw lastErr;
     }
