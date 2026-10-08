@@ -1,8 +1,8 @@
 // 석적초 AIEP 교내 연수 — 오프라인 캐시(한 번 본 안내서는 인터넷이 약해도 다시 열림)
-const V = 'sj-aiep-202610081403';
+const V = 'sj-aiep-202610081445';
 // 안내서 그림 묶음은 새로 배포해도 다시 받지 않도록 따로 둡니다. 묶음이 바뀌면 주소 끝(?v=크기)이 바뀌어 새로 받습니다.
 const PACKS = 'sj-aiep-packs';
-const CORE = ['./', 'index.html', 'content.js?v=202610081403', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-180.png'];
+const CORE = ['./', 'index.html', 'content.js?v=202610081445', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-180.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(V).then(c => c.addAll(CORE.map(u => new Request(u, { cache:'reload' })))).then(() => self.skipWaiting()));
 });
