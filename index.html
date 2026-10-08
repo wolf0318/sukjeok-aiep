@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-+KBl5c4vNlfpDIbAyT35PA5sCHUGNQSpKNPUD/oBMUM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-aA6rovb4PIvyrZDhFIQ9Y4dk2y/c8d1wU1pMS4Jp+6s='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://generativelanguage.googleapis.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>석적초 AIEP 교내 연수</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -89,9 +89,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 .topbar{position:sticky;top:0;z-index:30;color:#EEF5EF;padding-top:env(safe-area-inset-top,0px);
   background:var(--grain),linear-gradient(180deg,var(--board) 0%,var(--board-deep) 100%);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 6px 18px -8px rgba(10,30,20,.55)}
 .topbar .wrap{display:flex;align-items:center;gap:12px;min-height:60px}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0;flex:0 1 auto}
+.brand>span{min-width:0}
 .brand .medal{--s:38px}
-.brand b{font-weight:700;font-size:17px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--chalk)}
+.brand b{display:block;font-weight:700;font-size:17px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--chalk)}
 .brand small{display:block;font-size:12.5px;color:var(--chalk-2);font-weight:500}
 .topbar .spacer{flex:1}
 .tb-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:#EEF5EF;border-radius:999px;padding:7px 14px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;box-shadow:0 2px 0 rgba(0,0,0,.25)}
@@ -338,6 +339,16 @@ details.slide-text li{margin:2px 0}
 .modal-card{background:var(--surface);border-radius:var(--r-lg);width:min(560px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:24px;box-shadow:0 30px 60px -20px rgba(0,0,0,.45)}
 .modal-card h2{margin:0 0 4px;font-family:var(--f-hand);font-size:30px;line-height:1.1}
 .modal-card .intro{margin:0 0 18px;color:var(--ink-2);font-size:14.5px}
+/* 선생님 고르기 */
+.tb-btn.who span{max-width:9em;overflow:hidden;text-overflow:ellipsis}
+.people{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:8px;max-height:46vh;overflow:auto}
+.person{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center;text-align:left;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--paper);cursor:pointer;box-shadow:0 3px 0 var(--line)}
+.person:hover{border-color:var(--leaf)}
+.person:active{transform:translateY(2px);box-shadow:none}
+.person b{font-size:16px}
+.person span{grid-column:1;font-size:13.5px;color:var(--ink-2)}
+.person em{grid-column:2;grid-row:1 / span 2;font-style:normal;font-size:12.5px;font-weight:700;color:var(--leaf);background:var(--leaf-soft);padding:3px 10px;border-radius:99px}
+.person.now{border-color:var(--leaf)}
 .adm-step{margin:6px 0 10px;font-size:15px;font-weight:700;color:var(--leaf)}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
 .field label{font-weight:700;font-size:14px}
@@ -357,8 +368,7 @@ details.slide-text li{margin:2px 0}
 footer{margin-top:20px;padding-block:22px 100px;color:var(--ink-3);font-size:13.5px;background:linear-gradient(180deg,var(--wall-2),transparent 70%);border-top:1px solid var(--line)}
 footer .wrap{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center}
 footer p{margin:0}
-footer #clearMine{margin-left:auto}
-footer .admin{background:none;border:0;color:var(--ink-3);text-decoration:underline;cursor:pointer;font-size:13.5px;padding:4px}
+footer .admin{margin-left:auto;background:none;border:0;color:var(--ink-3);text-decoration:underline;cursor:pointer;font-size:13.5px;padding:4px}
 
 @media (max-width:1000px){
   .viewer{grid-template-columns:minmax(0,1fr);gap:0;padding-top:14px}
@@ -380,8 +390,11 @@ footer .admin{background:none;border:0;color:var(--ink-3);text-decoration:underl
   .chalk-title{font-size:46px}
   .chalk-lead{font-size:15px}
   .brand small{display:none}
-  .brand b{font-size:21px}
+  .brand b{font-size:17px}
   .tb-btn span{display:none}
+  .tb-btn.who span{display:inline;max-width:6em}
+  .tb-btn.who .sfx{display:none}
+  .tb-btn.who{padding:7px 10px}
   .shelf{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:18px}
   .stage3d{padding:16px 12px 0}
   .book{--t:11px}
@@ -438,6 +451,7 @@ footer .admin{background:none;border:0;color:var(--ink-3);text-decoration:underl
 <circle cx="78.1" cy="100.9" r="19" fill="var(--em-petal,#F4F3F6)" stroke="var(--em-petal-line,#BFC2CB)" stroke-width="1.5"/>
 <circle cx="100" cy="108" r="24" fill="var(--em-petal,#F4F3F6)"/><text x="100" y="115.6" text-anchor="middle" font-size="21" font-weight="800" letter-spacing="-1.2" fill="var(--em-seal,#DE3A2E)" font-family="'IBM Plex Sans KR','Noto Sans KR',sans-serif">석적</text></svg></span><span class="back">석적</span></span></span><span><b>석적초 AIEP 교내 연수</b><small>경북AI배움터 에듀테크 안내서 모음</small></span></a>
     <span class="spacer"></span>
+    <button class="tb-btn who" id="tbWho" type="button" aria-label="기록을 볼 선생님 바꾸기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span id="whoName">선생님 고르기</span></button>
     <button class="tb-btn" id="tbInstall" type="button" hidden aria-label="휴대폰에 앱으로 설치"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M12 7v7M9 11l3 3 3-3"/></svg><span>앱 설치</span></button>
     <button class="tb-btn" id="tbAsk" type="button" aria-label="연수 도우미 열기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>연수 도우미</span></button>
   </div>
@@ -450,7 +464,6 @@ footer .admin{background:none;border:0;color:var(--ink-3);text-decoration:underl
     <p>안내서 작성: 이정현, 황영수 · 2026. 10.</p>
     <p>안내서 PPT 파일은 ZEP 보드 '석적초 AIEP 교내 연수(안내서 모음)'에서 받으실 수 있어요.</p>
     <p>요금 표시는 연수를 준비하며 각 도구 화면과 배움터·업체 공지에서 직접 확인한 기준이에요(2026. 10. 7.).</p>
-    <button class="admin" id="clearMine" type="button">이 기기의 내 기록 지우기</button>
     <button class="admin" id="openAdmin" type="button">관리자 설정</button>
   </div>
 </footer>
@@ -539,7 +552,7 @@ footer .admin{background:none;border:0;color:var(--ink-3);text-decoration:underl
   <p class="fine">연수 안내서에 관한 질문에만 답해요. 학생 이름 같은 개인정보는 적지 마시고, 답 속 안내서 장 링크로 한 번 더 확인해 주세요.</p>
 </section>
 
-<script src="content.js?v=202610081237"></script>
+<script src="content.js?v=202610081317"></script>
 <script>
 (function(){
 'use strict';
@@ -572,13 +585,26 @@ const store = {
   set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} },
   del(k){ try { localStorage.removeItem(k); } catch(e){} }
 };
-let prog = store.get('sj.prog', { seen:{}, last:null });
-if (!prog || typeof prog !== 'object' || !prog.seen) prog = { seen:{}, last:null };
+/* ---------- 선생님별 기록 ----------
+   한 기기를 여러 선생님이 함께 써도, 고른 선생님 이름마다 본 장·이어 보기·연수 도우미 대화를 따로 저장합니다.
+   이름과 기록은 이 기기 브라우저에만 남고 어디로도 보내지 않습니다. */
+let people = store.get('sj.people', []); if (!Array.isArray(people)) people = [];
+let who = store.get('sj.who', '');
+if (!people.some(p => p.id === who)) who = people.length ? people.slice().sort((a, b) => b.at - a.at)[0].id : '';
+const progKey = id => 'sj.prog.' + id, chatKey = id => 'sj.chat.' + id;
+const blankProg = () => ({ seen:{}, last:null });
+function readProg(id){ const v = id ? store.get(progKey(id), null) : null; return v && typeof v === 'object' && v.seen ? v : blankProg(); }
+function readChat(id){ const v = id ? store.get(chatKey(id), []) : []; return Array.isArray(v) ? v : []; }
+const personOf = id => people.find(p => p.id === id);
+const whoLabel = id => { const n = (personOf(id) || {}).name || ''; return !n ? '' : /(선생님|쌤)$/.test(n) ? n : /선생$/.test(n) ? n + '님' : n + ' 선생님'; };
+const countSeen = pr => D.decks.reduce((a, d) => a + Math.min((pr.seen[d.key] || []).length, d.slides.length), 0);
+let prog = readProg(who);
 function markSeen(key, n){
+  if (!who) return;
   const a = prog.seen[key] || (prog.seen[key] = []);
   if (!a.includes(n)) a.push(n);
   prog.last = { key, n, at: Date.now() };
-  store.set('sj.prog', prog);
+  store.set(progKey(who), prog);
 }
 const seenSet = key => new Set(prog.seen[key] || []);
 const seenCount = key => (prog.seen[key] || []).length;
@@ -705,7 +731,7 @@ function showHome(){
       <div class="tray">
         <span class="chalk-stick"><b class="tnum">${D.decks.length}</b>권</span>
         <span class="chalk-stick"><b class="tnum">${D.total}</b>장</span>
-        <span class="meter"><span class="tnum">${seen ? `지금까지 ${seen}장 봤어요` : '아직 본 장이 없어요'}</span><span class="bar" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="chalk-stick gold"><b class="tnum">${pct}</b>%</span></span>
+        <span class="meter"><span class="tnum">${who ? josa(whoLabel(who), '은', '는') + ' ' : ''}${seen ? `지금까지 ${seen}장 봤어요` : '아직 본 장이 없어요'}</span><span class="bar" aria-hidden="true"><i style="width:${pct}%"></i></span><span class="chalk-stick gold"><b class="tnum">${pct}</b>%</span></span>
       </div>
     </div>
   </section>
@@ -1050,8 +1076,8 @@ function buildContext(q, prevQ){
   return { ctx: picked.join('\n\n') || '(관련된 장을 찾지 못했어요)', cur: cur ? `${cur.d.name} ${cur.s.n}장 [[${cur.d.key}:${cur.s.n}]] · ${cur.s.t}` : '첫 화면(안내서 모음)' };
 }
 
-let chat = store.get('sj.chat', []);
-if (!Array.isArray(chat)) chat = [];
+let chat = readChat(who);
+const saveChat = () => { if (who) store.set(chatKey(who), chat); };
 let busy = null;
 const chatEl = $('#chat'), msgsEl = $('#msgs');
 const chatOpen = () => !chatEl.hidden;
@@ -1070,7 +1096,7 @@ function closeChat(){ chatEl.hidden = true; if (!($('#toc') && $('#toc').classLi
 $('#fab').onclick = () => chatOpen() ? closeChat() : openChat();
 $('#tbAsk').onclick = () => chatOpen() ? closeChat() : openChat();
 $('#chatClose').onclick = closeChat;
-$('#chatReset').onclick = () => { if (busy) busy.abort(); chat = []; store.set('sj.chat', chat); renderMsgs(); setChips(); };
+$('#chatReset').onclick = () => { if (busy) busy.abort(); chat = []; saveChat(); renderMsgs(); setChips(); };
 function md(src){
   const lines = esc(src).split('\n'); let html = '', list = null; const seen = new Set();
   const close = () => { if (list) { html += list === 'ol' ? '</ol>' : '</ul>'; list = null; } };
@@ -1271,7 +1297,7 @@ async function ask(q){
   } finally {
     busy = null; $('#askSend').textContent = '보내기';
     if (chat.length > 40) chat = chat.slice(-40);
-    store.set('sj.chat', chat); renderMsgs();
+    saveChat(); renderMsgs();
   }
 }
 
@@ -1339,31 +1365,7 @@ function openAdmin(){
 }
 $('#openAdmin').onclick = openAdmin;
 
-/* ---------- 이 기기의 내 기록 지우기 (여러 선생님이 함께 쓰는 컴퓨터용) ---------- */
-function openClearMine(){
-  let m = $('#clearModal'); if (m) m.remove();
-  const seen = totalSeen(), talks = chat.filter(x => x.role === 'user').length;
-  m = document.createElement('div'); m.className = 'modal'; m.id = 'clearModal';
-  m.innerHTML = `<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="clH">
-    <h2 id="clH">이 기기의 내 기록 지우기</h2>
-    <p class="intro">본 장 표시, 이어 보기, 연수 도우미에게 물어본 대화를 이 기기에서 지워요. 지금 이 기기에는 본 장 ${seen}장, 질문 ${talks}개가 남아 있어요.</p>
-    <div class="box">학습 기록은 기기마다 따로 저장돼서 링크로 다른 선생님께 넘어가지 않아요. 다만 여러 선생님이 함께 쓰는 컴퓨터라면, 다 보신 뒤 지워 주세요. 연수 도우미 연결은 그대로 남아요.</div>
-    <div class="actions"><button class="btn" id="clCancel" type="button">그대로 두기</button><button class="btn primary" id="clOk" type="button">기록 지우기</button></div>
-  </div>`;
-  document.body.appendChild(m);
-  $('#clCancel').onclick = () => m.remove();
-  m.addEventListener('click', e => { if (e.target === m) m.remove(); });
-  $('#clOk').onclick = () => {
-    prog = { seen:{}, last:null }; store.del('sj.prog');
-    chat = []; store.del('sj.chat'); store.del('sj.rl');
-    m.remove(); toast('이 기기의 기록을 지웠어요');
-    renderMsgs(); setChips();
-    // 지운 뒤에는 첫 화면으로 돌아가요(보던 장을 다시 '본 장'으로 남기지 않도록).
-    view.name = ''; if (location.hash === '#/' || !location.hash) route(); else location.hash = '#/';
-  };
-  setTimeout(() => $('#clCancel').focus(), 30);
-}
-$('#clearMine').onclick = openClearMine;
+
 
 /* ---------- 휴대폰 앱으로 설치 ---------- */
 let installEvt = null;
@@ -1393,8 +1395,69 @@ updateInstallBtn();
 if ('serviceWorker' in navigator && location.protocol === 'https:' || location.hostname === 'localhost') {
   if ('serviceWorker' in navigator) window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
 }
+/* ---------- 선생님 고르기 ---------- */
+function updateWhoChip(){ const el = $('#whoName'); if (!who) { el.textContent = '선생님 고르기'; return; } const n = whoLabel(who), base = (personOf(who) || {}).name || n; el.innerHTML = n.startsWith(base) && n !== base ? `${esc(base)}<span class="sfx">${esc(n.slice(base.length))}</span>` : esc(n); }
+function addPerson(name){
+  const same = people.find(p => p.name === name); if (same) return same.id;
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  people.push({ id, name, at: Date.now() }); store.set('sj.people', people);
+  // 이름표가 없던 예전 판에서 쌓인 기록은 처음 만드는 이름표로 옮깁니다.
+  if (people.length === 1) {
+    const oldProg = store.get('sj.prog', null), oldChat = store.get('sj.chat', null);
+    if (oldProg && oldProg.seen) store.set(progKey(id), oldProg);
+    if (Array.isArray(oldChat)) store.set(chatKey(id), oldChat);
+    store.del('sj.prog'); store.del('sj.chat');
+  }
+  return id;
+}
+function usePerson(id){
+  if (busy) busy.abort();
+  who = id; store.set('sj.who', id);
+  const p = personOf(id); if (p) { p.at = Date.now(); store.set('sj.people', people); }
+  try { sessionStorage.setItem('sj.picked', '1'); } catch(e){}
+  prog = readProg(id); chat = readChat(id);
+  updateWhoChip(); renderMsgs(); setChips();
+  view.name = ''; route();
+}
+function openWho(first){
+  let m = $('#whoModal'); if (m) m.remove();
+  const list = people.slice().sort((a, b) => b.at - a.at);
+  m = document.createElement('div'); m.className = 'modal'; m.id = 'whoModal';
+  m.innerHTML = `<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="whoH">
+    <h2 id="whoH">${list.length ? '누구의 기록으로 볼까요?' : '이 기기에서 보실 선생님 이름을 적어 주세요'}</h2>
+    <p class="intro">이 기기를 쓰는 선생님마다 본 장, 이어 보기, 연수 도우미 대화를 따로 저장해요. 이름은 이 기기에만 저장되고 어디로도 보내지 않아요.</p>
+    ${list.length ? `<ul class="people">${list.map(p => { const n = countSeen(readProg(p.id)); return `<li><button class="person${p.id === who ? ' now' : ''}" type="button" data-id="${p.id}"><b>${esc(whoLabel(p.id))}</b><span class="tnum">${n ? `${n}장 봤어요 (${Math.round(n / D.total * 100)}%)` : '아직 본 장이 없어요'}</span>${p.id === who ? '<em>지금 보는 중</em>' : ''}</button></li>`; }).join('')}</ul>` : ''}
+    <div class="field"><label for="newWho">${list.length ? '처음 보시는 선생님' : '선생님 이름'}</label><div class="row"><input id="newWho" type="text" maxlength="12" autocomplete="off" placeholder="이름 (예: 김민지)"><button class="btn primary" id="addWho" type="button">이 이름으로 시작</button></div><small>같은 이름이 이미 있으면 그 기록으로 이어서 봐요.</small></div>
+    <p class="status bad" id="whoStatus" hidden></p>
+    ${first && !list.length ? '' : '<div class="actions"><button class="btn" id="whoClose" type="button">닫기</button></div>'}
+  </div>`;
+  document.body.appendChild(m);
+  const pick = id => { m.remove(); usePerson(id); toast(`${whoLabel(id)} 기록으로 볼게요`); };
+  m.querySelectorAll('.person').forEach(b => b.onclick = () => pick(b.dataset.id));
+  const add = () => {
+    const name = $('#newWho').value.replace(/\s+/g, ' ').trim().slice(0, 12);
+    if (!name) { const st = $('#whoStatus'); st.hidden = false; st.textContent = '이름을 적어 주세요.'; $('#newWho').focus(); return; }
+    pick(addPerson(name));
+  };
+  $('#addWho').onclick = add;
+  $('#newWho').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) add(); });
+  const close = $('#whoClose');
+  if (close) { close.onclick = () => { m.remove(); try { sessionStorage.setItem('sj.picked', '1'); } catch(e){} }; m.addEventListener('click', e => { if (e.target === m) close.onclick(); }); }
+  setTimeout(() => (list.length && !first ? m.querySelector('.person') : $('#newWho')).focus(), 30);
+}
+$('#tbWho').onclick = () => openWho(false);
+updateWhoChip();
+
 window.addEventListener('hashchange', route);
 route();
+// 처음 쓰는 기기는 이름부터, 여러 선생님이 쓰는 기기는 새로 열 때마다 누구인지 물어봅니다.
+(function askWho(){
+  let picked = false; try { picked = sessionStorage.getItem('sj.picked') === '1'; } catch(e){}
+  if (people.length === 1 || (people.length > 1 && picked)) return;
+  // 선생님용 링크로 처음 들어온 경우에는 연수 코드 창을 먼저 마친 뒤에 물어봅니다.
+  let ticks = 0;
+  const t = setInterval(() => { if ($('#unlockModal') || (store.get('sj.pending', '') && ticks++ < 3)) return; clearInterval(t); if (!$('#whoModal')) openWho(true); }, 400);
+})();
 })();
 </script>
 </body>
